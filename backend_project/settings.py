@@ -136,9 +136,10 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for development
-
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+CCORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1","https://seo-platform-backend-490300be7bc6.herokuapp.com/"]
 
 SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'False') == 'True'
 SESSION_COOKIE_SECURE = True
