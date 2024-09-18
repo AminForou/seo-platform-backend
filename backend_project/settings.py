@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-r)q4gsmqg@1)1-tgx2_nf
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 
-ALLOWED_HOSTS = ['seo-platform-backend.herokuapp.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['seo-platform-backend-490300be7bc6.herokuapp.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "corsheaders",
-    'api',
+    "api",
 ]
 
 MIDDLEWARE = [
@@ -90,7 +90,7 @@ WSGI_APPLICATION = "backend_project.wsgi.application"
 # }
 
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
+    "default": dj_database_url.config(conn_max_age=600, ssl_require=True)
 }
 
 
@@ -136,11 +136,14 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-CCORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-]
-ALLOWED_HOSTS = ["localhost", "127.0.0.1","https://seo-platform-backend-490300be7bc6.herokuapp.com/"]
+CORS_ALLOW_ALL_ORIGINS = True
 
-SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'False') == 'True'
+ALLOWED_HOSTS = [
+    "seo-platform-backend-490300be7bc6.herokuapp.com",
+    "localhost",
+    "127.0.0.1",
+]
+
+SECURE_SSL_REDIRECT = os.environ.get("SECURE_SSL_REDIRECT", "False") == "True"
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
