@@ -5,21 +5,25 @@ from bs4 import BeautifulSoup
 import time
 from urllib.parse import urljoin
 from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
+from django.urls import reverse
 
 @api_view(['GET', 'POST'])
 def check_url_status(request):
     url = request.GET.get('url') if request.method == 'GET' else request.data.get('url')
+    user_agent = request.GET.get('user_agent') if request.method == 'GET' else request.data.get('user_agent')
+    if not user_agent:
+        user_agent = request.META.get('HTTP_USER_AGENT', 'Mozilla/5.0')
     if not url:
         return Response({'error': 'URL is required.'}, status=400)
     try:
-        user_agent = request.META.get('HTTP_USER_AGENT', 'Mozilla/5.0')
-
         start_time = time.time()
 
         # Initialize variables
         redirect_steps = []
         current_url = url
-        current_response = requests.get(current_url, headers={'User-Agent': user_agent}, allow_redirects=False, timeout=10)
+        headers = {'User-Agent': user_agent}
+        current_response = requests.get(current_url, headers=headers, allow_redirects=False, timeout=10)
         current_status_code = current_response.status_code
 
         # Record initial step
@@ -38,7 +42,7 @@ def check_url_status(request):
 
             # Request next URL
             current_url = next_url
-            current_response = requests.get(current_url, headers={'User-Agent': user_agent}, allow_redirects=False, timeout=10)
+            current_response = requests.get(current_url, headers=headers, allow_redirects=False, timeout=10)
             current_status_code = current_response.status_code
 
             # Record the step
@@ -89,3 +93,13 @@ def check_url_status(request):
         return Response(result)
     except Exception as e:
         return Response({'error': str(e)}, status=500)
+
+def home(request):
+    api_urls = {
+        'Check URL Status': reverse('check_url_status'),
+    }
+    response_content = "<h1>Success! The server is running.</h1><ul>"
+    for name, url in api_urls.items():
+        response_content += f"<li><a href='{url}'>{name}</a></li>"
+    response_content += "</ul>"
+    return HttpResponse(response_content)
