@@ -13,7 +13,9 @@ def check_url_status(request):
     url = request.GET.get('url') if request.method == 'GET' else request.data.get('url')
     user_agent = request.GET.get('user_agent') if request.method == 'GET' else request.data.get('user_agent')
     if not user_agent:
-        user_agent = request.META.get('HTTP_USER_AGENT', 'Mozilla/5.0')
+        user_agent = request.META.get('HTTP_USER_AGENT', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                                                         'AppleWebKit/537.36 (KHTML, like Gecko) '
+                                                         'Chrome/115.0.0.0 Safari/537.36')
     if not url:
         return Response({'error': 'URL is required.'}, status=400)
     try:
