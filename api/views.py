@@ -8,6 +8,16 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.urls import reverse
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import ContactMessageSerializer
+from django.core.mail import send_mail
+from django.conf import settings
+import logging
+
+logger = logging.getLogger(__name__)
+
 @api_view(['GET', 'POST'])
 def check_url_status(request):
     url = request.GET.get('url') if request.method == 'GET' else request.data.get('url')
@@ -105,3 +115,32 @@ def home(request):
         response_content += f"<li><a href='{url}'>{name}</a></li>"
     response_content += "</ul>"
     return HttpResponse(response_content)
+
+
+class ContactMessageView(APIView):
+    def post(self, request):
+        logger.info("Received data: %s", request.data)
+        serializer = ContactMessageSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            # Send email notification
+            name = serializer.validated_data['name']
+            email = serializer.validated_data['email']
+            subject = serializer.validated_data['subject']
+            message = serializer.validated_data['message']
+            full_message = f"From: {name} <{email}>\n\n{message}"
+            try:
+                send_mail(
+                    subject,
+                    full_message,
+                    settings.DEFAULT_FROM_EMAIL,  # Sender's email
+                    [settings.CONTACT_EMAIL],     # Receiver's email
+                    fail_silently=False,
+                )
+            except Exception as e:
+                logger.error("Error sending email: %s", e)
+                return Response({'error': 'Error sending email'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'message': 'Message sent successfully!'}, status=status.HTTP_201_CREATED)
+        else:
+            logger.error("Form submission errors: %s", serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -13,7 +13,20 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 import dj_database_url
 from pathlib import Path
+import environ
+from dotenv import load_dotenv
 
+load_dotenv()
+
+env = environ.Env(
+    DEBUG=(bool, False)
+)
+
+# Reading .env file if it exists
+environ.Env.read_env()
+
+# Debug statement to check if .env file is read
+print("Loaded .env file")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,13 +36,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-r)q4gsmqg@1)1-tgx2_nfm(vzodbz%c7-9^3jbp$b^qxqjg-+!')
+SECRET_KEY = env('SECRET_KEY', default='your-default-secret-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = env('DEBUG')
 
-
-ALLOWED_HOSTS = ['seo-platform-backend-490300be7bc6.herokuapp.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
 
 
 # Application definition
@@ -82,17 +94,9 @@ WSGI_APPLICATION = "backend_project.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-
 DATABASES = {
-    "default": dj_database_url.config(conn_max_age=600, ssl_require=True)
+    'default': dj_database_url.config(default=env('DATABASE_URL'))
 }
-
 
 
 # Password validation
@@ -138,12 +142,25 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CORS_ALLOW_ALL_ORIGINS = True
 
-ALLOWED_HOSTS = [
-    "seo-platform-backend-490300be7bc6.herokuapp.com",
-    "localhost",
-    "127.0.0.1",
-]
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = env('EMAIL_HOST', default='smtp.gmail.com')
+EMAIL_PORT = env.int('EMAIL_PORT', default=587)
+EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+CONTACT_EMAIL = env('CONTACT_EMAIL', default='default_contact_email@example.com')
 
-SECURE_SSL_REDIRECT = os.environ.get("SECURE_SSL_REDIRECT", "False") == "True"
+# Security settings
+SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=True)
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
+
+print("Using database:", DATABASES['default']['NAME'])
+
+print("DB_USER:", env('DB_USER', default=''))
+print("DB_PASSWORD:", env('DB_PASSWORD', default=''))
+print("DB_HOST:", env('DB_HOST', default=''))
+print("DB_PORT:", env('DB_PORT', default=''))
+print("DB_NAME:", env('DB_NAME', default=''))
