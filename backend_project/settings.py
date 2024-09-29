@@ -23,12 +23,16 @@ env = environ.Env(
 environ.Env.read_env()
 
 # Debug statement to check if .env file is read
-print("Loaded .env file")
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env.read_env(os.path.join(BASE_DIR, '.env'))
+if os.path.exists(os.path.join(BASE_DIR, '.env')):
+    environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+    print("Loaded .env file")
+else:
+    print("No .env file found, relying on environment variables")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -39,8 +43,12 @@ SECRET_KEY = env('SECRET_KEY', default='your-default-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1','seo-platform-backend-490300be7bc6.herokuapp.com','seo-platform-backend.herokuapp.com','tools.aminforoutan.com'])
-
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[
+    'localhost', '127.0.0.1',
+    'seo-platform-backend-490300be7bc6.herokuapp.com',
+    'seo-platform-backend.herokuapp.com',
+    'tools.aminforoutan.com'
+])
 
 # Application definition
 
@@ -177,13 +185,15 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 CONTACT_EMAIL = env('CONTACT_EMAIL', default='default_contact_email@example.com')
 
 # Security settings
-SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=False)
+SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=True)
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-print("Using database:", DATABASES['default']['NAME'])
-print("DB_USER:", env('DB_USER', default=''))
-print("DB_PASSWORD:", env('DB_PASSWORD', default=''))
-print("DB_HOST:", env('DB_HOST', default=''))
-print("DB_PORT:", env('DB_PORT', default=''))
-print("DB_NAME:", env('DB_NAME', default=''))
+
+# print("Using database:", DATABASES['default']['NAME'])
+# print("DB_USER:", env('DB_USER', default=''))
+# print("DB_PASSWORD:", env('DB_PASSWORD', default=''))
+# print("DB_HOST:", env('DB_HOST', default=''))
+# print("DB_PORT:", env('DB_PORT', default=''))
+# print("DB_NAME:", env('DB_NAME', default=''))
