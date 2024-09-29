@@ -14,9 +14,6 @@ import os
 import dj_database_url
 from pathlib import Path
 import environ
-from dotenv import load_dotenv
-
-load_dotenv()
 
 env = environ.Env(
     DEBUG=(bool, False)
@@ -142,6 +139,16 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CORS_ALLOW_ALL_ORIGINS = True
 
+CORS_ALLOW_HEADERS = [
+    'authorization',
+    'content-type',
+    'x-requested-with',
+    'accept',
+    'origin',
+    'x-csrftoken',
+    'access-control-allow-origin',
+]
+
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = env('EMAIL_HOST', default='smtp.gmail.com')
@@ -153,9 +160,9 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 CONTACT_EMAIL = env('CONTACT_EMAIL', default='default_contact_email@example.com')
 
 # Security settings
-SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=True)
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=False)
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
 
 print("Using database:", DATABASES['default']['NAME'])
 
