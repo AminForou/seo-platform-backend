@@ -28,6 +28,7 @@ print("Loaded .env file")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -91,9 +92,25 @@ WSGI_APPLICATION = "backend_project.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
-}
+# Database configuration
+if env('DATABASE_URL', default=None):
+    # For production (Heroku) when DATABASE_URL is set
+    DATABASES = {
+        'default': dj_database_url.config(conn_max_age=600, ssl_require=False)
+    }
+else:
+    # For local development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',  # Make sure you have PostgreSQL installed locally
+            'NAME': env('DB_NAME', default='seo_platform_contact'),
+            'USER': env('DB_USER', default='amin_foroutan'),
+            'PASSWORD': env('DB_PASSWORD', default='@postgv00d'),
+            'HOST': env('DB_HOST', default='localhost'),
+            'PORT': env('DB_PORT', default='5432'),
+        }
+    }
+
 
 
 # Password validation
@@ -163,3 +180,10 @@ CONTACT_EMAIL = env('CONTACT_EMAIL', default='default_contact_email@example.com'
 SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=False)
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
+
+print("Using database:", DATABASES['default']['NAME'])
+print("DB_USER:", env('DB_USER', default=''))
+print("DB_PASSWORD:", env('DB_PASSWORD', default=''))
+print("DB_HOST:", env('DB_HOST', default=''))
+print("DB_PORT:", env('DB_PORT', default=''))
+print("DB_NAME:", env('DB_NAME', default=''))
