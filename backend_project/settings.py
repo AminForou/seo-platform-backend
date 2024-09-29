@@ -38,7 +38,7 @@ SECRET_KEY = env('SECRET_KEY', default='your-default-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1','seo-platform-backend-490300be7bc6.herokuapp.com','seo-platform-backend.herokuapp.com'])
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1','seo-platform-backend-490300be7bc6.herokuapp.com','seo-platform-backend.herokuapp.com','tools.aminforoutan.com'])
 
 
 # Application definition
@@ -92,7 +92,7 @@ WSGI_APPLICATION = "backend_project.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(default=env('DATABASE_URL'))
+    'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
 }
 
 
@@ -163,11 +163,3 @@ CONTACT_EMAIL = env('CONTACT_EMAIL', default='default_contact_email@example.com'
 SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=False)
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
-
-print("Using database:", DATABASES['default']['NAME'])
-
-print("DB_USER:", env('DB_USER', default=''))
-print("DB_PASSWORD:", env('DB_PASSWORD', default=''))
-print("DB_HOST:", env('DB_HOST', default=''))
-print("DB_PORT:", env('DB_PORT', default=''))
-print("DB_NAME:", env('DB_NAME', default=''))
